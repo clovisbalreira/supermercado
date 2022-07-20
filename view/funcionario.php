@@ -39,7 +39,7 @@ session_start();
 			</nav>
 			<main class="content">
 				<?php
-					deletar('nome','funcionario');
+					deletar('funcionario');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
@@ -47,6 +47,7 @@ session_start();
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Funcionario <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os funcionarios do super mercado.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-8">
 								<div class="card">
 									<div class="card-header">
@@ -111,13 +112,13 @@ session_start();
 
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
@@ -161,7 +162,7 @@ session_start();
 												</form>
 											</td>
 											<td>
-											<?php echo botaoTabelaDeletar($funcionario->getCodigo(), $funcionario->getNome(), 'codigo', 'nome')?>
+											<?php echo botaoTabelaDeletar($funcionario->getCodigo())?>
 											</td>
 										</tr>
 									<?php } ?>
@@ -178,6 +179,7 @@ session_start();
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 	<script>
 		const input = document.getElementById('cpf')
 		input.addEventListener('keypress', function(e){

@@ -13,7 +13,7 @@
 <body>
     <p>Deslocado com sucesso</p>
     <?php 
-        session_destroy(); 
+        $_SESSION['usuario'] = ''; 
         header("Refresh:1; ../"); 
     ?>
 </body>

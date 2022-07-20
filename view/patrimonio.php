@@ -1,8 +1,9 @@
 <?php
-	require_once '../model/TipoContrato.php';
-	include "../controller/deletar.php";
-	include "../components/inputs.php";
-	session_start();
+require_once '../model/Patrimonio.php';
+include "../components/inputs.php";
+include "../controller/deletar.php";
+include "../php/funcao.php";
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -20,7 +21,9 @@
 
 	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
 
-	<title>Gestão Supermercado - Tipo Contrato</title>
+	<title>Gestão Supermercado - Contas
+
+	</title>
 
 	<link href="css/app.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -38,31 +41,65 @@
 			</nav>
 			<main class="content">
 				<?php
-					deletar('tipoContrato');
+					deletar('patrimonio');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
-						<h1 class="h3 d-inline align-middle"></h1>						
+						<h1 class="h3 d-inline align-middle"></h1>
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
-							<h1>Tipo de contrato <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os tipos de contratos entre o super mercado e os fornecedores.<br>ex. Gondulas, Ilhas etc...')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
-							<div class="col-12 col-lg-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="card-title mb-0">Nome:</h5>
-                                    </div>
-                                    <div class="card-body">
+							<h1>Patrimonio <span id="mensagem" onmouseover="mostrarInformacoes('Lista o patrimonio do mercado do super mercado.<br>Selecione para vender.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
+							<div class="col-12 col-lg-7">
+								<div class="card">
+									<div class="card-header">
+										<h5 class="card-title mb-0">Contas</h5>
+									</div>
+									<div class="card-body">
 										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
-                                        <input type="text" class="form-control" value="<?Php echo isset($_GET['nomeEditar']) ? $_GET['nomeEditar'] : '' ?>" placeholder="Digite o tipo de contrato" name="nome" required>
-                                    </div>
-                                </div>
-                            </div>
+										<div class="card-body">
+										<input class="form-control" placeholder="Digite o valor" id="nome" name="nome" value="<?Php echo isset($_GET['nomeEditar']) ? $_GET['nomeEditar'] : '' ?>" min="0" readonly>
+									</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-lg-3">
+								<div class="card">
+									<div class="card-header">
+										<h5 class="card-title mb-0">Preço</h5>
+									</div>
+									<div class="card-body">
+										<input type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" min="0" required>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-lg-2">
+								<div class="card">
+									<div class="form-check">
+										<div class="card-header">
+											<h5 class="card-title mb-0">Tipo</h5>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="tipo" value="patrimonio" id="flexRadioDefault2" checked>
+											<label class="form-check-label" for="flexRadioDefault2">
+												Patrimonio
+											</label>
+										</div>
+										<div class="card-body">
+											<input class="form-check-input" type="radio" name="tipo" value="credito" id="flexRadioDefault1" <?php if ( 'credito' == $_GET['tipoEditar']) { echo 'checked';}; ?>>
+											<label class="form-check-label" for="flexRadioDefault1">
+												Vender
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
 							<div class="col-12 col-lg-12" style="text-align:right;">
-								<?php echo botao("cadastroTipoContrato")?>
+								<?php echo botao("cadastroPatrimonio")?>
 							</div>
 						</div>
 					</form>
+
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
 							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
@@ -76,24 +113,28 @@
 							</div>
 						</div>
 					</form>
-					<?php if (!empty($_SESSION['tipoContrato'])) { ?>
+					<?php
+						if (!empty($_SESSION['patrimonio'])){ ?>
 						<table class="table">
 							<thead>
 								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
+								<th scope="col">Valor</th>
 								<th scope="col">Editar</th>
 								<th scope="col">Deletar</th>
 							</thead>
 							<tbody>
-								<?php foreach ($_SESSION['tipoContrato'] as $tipocontrato) { ?>
-									<?php if (empty($_GET['procurar']) or (str_contains($tipocontrato->getNome(), $_GET['procurar']))) { ?>
+								<?php foreach ($_SESSION['patrimonio'] as $patrimonio) { ?>
+									<?php if (empty($_GET['procurar']) or (str_contains($patrimonio->getNome(), $_GET['procurar'])) or (str_contains($patrimonio->getValor(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $tipocontrato->getCodigo(); ?></td>
-											<td><?php echo $tipocontrato->getNome(); ?></td>
+											<td><?php echo $patrimonio->getCodigo(); ?></td>
+											<td><?php echo $patrimonio->getNome(); ?></td>
+											<td><?php echo 'R$: ' . number_format($patrimonio->getValor(), 2, ',', '.'); ?></td>
 											<td>
 												<form action="#" method="get">
-													<input type="hidden" name="codigoEditar" value="<?php echo $tipocontrato->getCodigo(); ?>">
-													<input type="hidden" name="nomeEditar" value="<?php echo $tipocontrato->getNome(); ?>">
+													<input type="hidden" name="codigoEditar" value="<?php echo $patrimonio->getCodigo(); ?>">
+													<input type="hidden" name="nomeEditar" value="<?php echo $patrimonio->getNome(); ?>">
+													<input type="hidden" name="precoEditar" value="<?php echo $patrimonio->getValor(); ?>">
 													<button type="submit" class="btn btn-primary">
 														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit align-middle me-2">
 															<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -103,17 +144,16 @@
 												</form>
 											</td>
 											<td>
-												<?php echo botaoTabelaDeletar($tipocontrato->getCodigo())?>
+												<?php echo botaoTabelaDeletar($patrimonio->getCodigo())?>
 											</td>
 										</tr>
-									<?php } ?>
+								<?php } ?>
 								<?php } ?>
 							</tbody>
 						</table>
 					<?php }; ?>
 				</div>
 			</main>
-
 			<footer class="footer">
 				<?php require_once '../components/footer.php'; ?>
 			</footer>

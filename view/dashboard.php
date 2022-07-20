@@ -1,5 +1,10 @@
 <?php
 require_once '../model/Acesso.php';
+require_once '../model/Contas.php';
+require_once '../model/Contrato.php';
+require_once '../model/Precos.php';
+require_once '../model/Estoque.php';
+require_once '../model/Funcionario.php';
 session_start();
 ?>
 <!DOCTYPE html>
@@ -36,7 +41,141 @@ session_start();
 				<?php require_once '../components/header.php'; ?>
 			</nav>
 			<main class="content">
-				<p>DASHBOARD</p>
+					<div class="row">
+						<?php
+							$saldo = 0;
+							$patrimonio = 0;
+							$compras = 0;
+							$vendas = 0;
+							$contas = 0;
+							$contratos = 0;
+							$estoqueValor = 0;
+							$funcionarios = 0;
+
+							foreach($_SESSION['contas'] as $conta){
+								if (str_contains($conta->getDataPagamento(), date('Y-m'))) {
+									if($conta->getTipoConta() == 'credito'){
+										$vendas += $conta->getPreco();
+										$saldo += $conta->getPreco();
+									}
+									if($conta->getTipoConta() == 'debito' or $conta->getTipoConta() == 'patrimonio'){
+										$compras += $conta->getPreco();
+										$saldo -= $conta->getPreco();
+									}
+									if($conta->getTipoConta() == 'conta'){
+										$contas += $conta->getPreco();
+										$saldo -= $conta->getPreco();
+									}
+								}
+								if($conta->getTipoConta() == 'patrimonio'){
+									$patrimonio += $conta->getPreco();
+									$saldo += $conta->getPreco();
+								}	
+							}
+							
+							foreach($_SESSION['contrato'] as $contrato){
+								$contratos += $contrato->getValor();
+								$saldo += $contrato->getValor();
+							}
+
+							foreach($_SESSION['funcionario'] as $funcionario){
+								$funcionarios += $funcionario->getSalario();
+								$saldo -= $funcionario->getSalario();
+							}
+
+							foreach($_SESSION['estoque'] as $estoque){
+								$quantidade = $estoque->getQuantidade();
+								foreach($_SESSION['precos'] as $preco){
+									if($estoque->getProduto() == $preco->getProduto()){
+										$estoqueValor += $quantidade * $preco->getPreco();
+									}
+								}
+							}
+						?>
+
+						<h1>Super Mercado <span id="mensagem" onmouseover="mostrarInformacoes('Visualize a renda do super mercado do mês.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
+
+						<div class="col-12 col-lg-6">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Saldo</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $saldo < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($saldo, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-6">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Patrimônio</h5>
+								</div>
+								<div class="card-body">
+								<p style="color: <?php echo $patrimonio < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($patrimonio, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Compras</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $compras < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($compras, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Vendas</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $vendas < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($vendas, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Contas</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $contas < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($contas, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-3">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Contratos</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $contratos < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($contratos, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-6">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Estoque</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $estoqueValor < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($estoqueValor, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-3">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Funcionarios</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $funcionarios < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($funcionarios, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+					</div>
 			</main>
 			<footer class="footer">
 				<?php require_once '../components/footer.php'; ?>
@@ -44,6 +183,7 @@ session_start();
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

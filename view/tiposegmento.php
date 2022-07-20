@@ -39,7 +39,7 @@
 			</nav>
 			<main class="content">
 				<?php
-					deletar('nome','tipoSegmento');
+					deletar('tipoSegmento');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
@@ -47,6 +47,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Tipo de segmento <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os tipos de segmentos e seus segmentos.<br>Ex. Chocolate, Cerveja etc...')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-8">
                                 <div class="card">
                                     <div class="card-header">
@@ -79,13 +80,13 @@
 					</form>
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
@@ -120,7 +121,7 @@
 												</form>
 											</td>
 											<td> 
-												<?php echo botaoTabelaDeletar($tipoSegmento->getCodigo(), $tipoSegmento->getNome(), 'codigo', 'nome')?>
+												<?php echo botaoTabelaDeletar($tipoSegmento->getCodigo())?>
 											</td>
 										</tr>
 									<?php } ?>
@@ -137,6 +138,7 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

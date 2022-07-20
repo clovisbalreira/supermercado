@@ -1,13 +1,13 @@
 <?php
-    class Acesso{
+    class Patrimonio{
         private $codigo;
         private $nome;
-        private $senha;
+        private $valor;
 
-        function __construct($codigo, $nome, $senha){
+        function __construct($codigo, $nome, $valor){
             $this->codigo = $codigo;
             $this->nome = $nome;
-            $this->senha = $senha;
+            $this->valor = $valor;       
         }
 
         public function getCodigo()
@@ -34,17 +34,16 @@
                 return $this;
         }
 
-        public function getSenha()
+        public function getValor()
         {
-                return $this->senha;
+                return $this->valor;
         }
 
-        public function setSenha($senha)
+        public function setValor($valor)
         {
-                $this->senha = $senha;
+                $this->valor = $valor;
 
                 return $this;
         }
-
     }
 ?>

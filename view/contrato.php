@@ -3,6 +3,8 @@
 	require_once '../model/Fornecedor.php';
 	require_once '../model/TipoSegmento.php';
 	require_once '../model/TipoContrato.php';
+	include "../controller/deletar.php";
+	include "../components/inputs.php";
 	session_start();
 ?>
 <!DOCTYPE html>
@@ -39,9 +41,7 @@
 			</nav>
 			<main class="content">
 				<?php
-					if (isset($_GET['codigo']) and isset($_GET['nome'])) {
-						unset($_SESSION['contrato'][$_GET['codigo']]);
-					}
+					deletar('contrato');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
@@ -49,6 +49,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Contrato <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os contratos do super mercado e os fornecedores.<br>Selecionado o percentual do espaço do tipo de contrato, o valor, o fornecedor, o segmento e a data de inicio e fim do contrato.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-6">
 								<div class="card">
 									<div class="card-header">
@@ -71,7 +72,7 @@
 										<h5 class="card-title mb-0">Porcentagem</h5>
 									</div>
 									<div class="card-body">
-										<input type="number" step="0.01" class="form-control" placeholder="Digite a porcentagem" name="porcentagem" value="<?Php echo isset($_GET['porcentagemEditar']) ? $_GET['porcentagemEditar'] : '' ?>" min="0" required>
+										<input type="number" step="0.01" class="form-control" placeholder="Digite a porcentagem" name="porcentagem" value="<?Php echo isset($_GET['porcentagemEditar']) ? $_GET['porcentagemEditar'] : '' ?>" min="0" max="100" required>
 									</div>
 								</div>
 							</div>
@@ -142,13 +143,13 @@
 					</form>
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
@@ -198,17 +199,7 @@
 												</form>
 											</td>
 											<td>
-												<form action="#" method="get">
-													<input type="hidden" name="codigo" value="<?php echo $contrato->getCodigo(); ?>">
-													<input type="hidden" name="nome" value="<?php echo $contrato->getTipoContrato(); ?>">
-													<button type="submit" class="btn btn-danger ">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-delete align-middle me-2">
-															<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-															<line x1="18" y1="9" x2="12" y2="15"></line>
-															<line x1="12" y1="9" x2="18" y2="15"></line>
-														</svg>
-													</button>
-												</form>
+												<?php echo botaoTabelaDeletar($contrato->getCodigo())?>
 											</td>
 										</tr>
 									<?php } ?>
@@ -225,6 +216,7 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

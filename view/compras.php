@@ -3,9 +3,11 @@ require_once '../model/Contas.php';
 require_once '../model/Produto.php';
 require_once '../model/Precos.php';
 require_once '../model/Fornecedor.php';
+require_once '../model/Estoque.php';
 require_once '../model/TipoPagamento.php';
 include "../controller/deletar.php";
 include "../components/inputs.php";
+include "../php/funcao.php";
 session_start();
 ?>
 <!DOCTYPE html>
@@ -44,12 +46,38 @@ session_start();
 				<?php require_once '../components/header.php'; ?>
 			</nav>
 			<main class="content">
+				<?php
+					$produtoDeletar = '';
+					$quantidadeDeletar = '';
+					$quantidadeCaixa = '';
+					foreach($_SESSION['contas'] as $secao){
+						if($_GET['codigo'] == $secao->getCodigo()){
+							$produtoDeletar = $secao->getProduto(); 
+							$quantidadeDeletar = $secao->getQuantidade();
+						}
+					}
+					foreach($_SESSION['precos'] as $pro){
+						if($produtoDeletar == $pro->getProduto()){
+							$quantidadeCaixa = $pro->getCaixa();
+						}
+					}
+					$indice = 0;
+					foreach($_SESSION['estoque'] as $est){
+						if($produtoDeletar == $est->getProduto()){
+							$_SESSION['estoque'][$indice] = new Estoque($indice, $est->getFornecedor(), $produtoDeletar, $est->getQuantidade() - ($quantidadeCaixa * $quantidadeDeletar));;
+						}
+						$indice ++;
+					}
+					deletar('contas');
+					//echo deletarEstoque($_GET['codigo'], 'contas', 'precos', 'estoque');
+				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
 						<h1 class="h3 d-inline align-middle"></h1>
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Compras <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre as compras de produtos do super mercado.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-4">
 								<div class="card">
 									<div class="card-header">
@@ -57,10 +85,10 @@ session_start();
 									</div>
 									<div class="card-body">
 										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
-										<select class="form-select mb-3" id="fornecedor" name="fornecedor" required >
+										<select class="form-select mb-3" id="fornecedor" name="fornecedor" required <?php if(isset($_GET['fornecedorEditar'])){ echo 'disabled';} ?> >
 											<option value="">Selecione o fornecedor</option>
 											<?php foreach( $_SESSION['fornecedor'] as $fornecedor){?>
-												<option value="<?php echo $fornecedor->getNome(); ?>" <?php if ($fornecedor->getNome() == $_GET['fornecedorEditar']) { echo 'selected';} ?>><?php echo $fornecedor->getNome(); ?></option>
+												<option value="<?php echo $fornecedor->getNome(); ?>" <?php if ($fornecedor->getNome() == $_GET['fornecedorEditar']) { echo 'selected';} ?>  ><?php echo $fornecedor->getNome(); ?></option>
 											<?php } ?>
 										</select>
 									</div>
@@ -72,8 +100,7 @@ session_start();
 										<h5 class="card-title mb-0">Produto</h5>
 									</div>
 									<div class="card-body">
-										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
-										<select class="form-select mb-3" id="produto" name="produto" required>
+										<select class="form-select mb-3" id="produto" name="produto" required <?php if(isset($_GET['produtoEditar'])){ echo 'disabled';} ?>>
 											<option value="">Selecione o produto</option>
 											<?php 
 												if(isset($_GET['produtoEditar'])){
@@ -101,7 +128,7 @@ session_start();
 													echo $preco->getCaixa();
 												}
 											}
-										} ?>" readonly>
+										} ?>" readonly required>
 									</div>
 								</div>
 							</div>
@@ -118,10 +145,10 @@ session_start();
 							<div class="col-12 col-lg-3">
 								<div class="card">
 									<div class="card-header">
-										<h5 class="card-title mb-0">Preço unitario:</h5>
+										<h5 class="card-title mb-0">Preço caixa:</h5>
 									</div>
 									<div class="card-body">
-										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" min="0" required>
+										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" max="<?php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" min="0" required>
 									</div>
 								</div>
 							</div>
@@ -168,18 +195,20 @@ session_start();
 
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
 					</form>
-					<?php if (!empty($_SESSION['contas'])) { ?>
+					<?php
+						$possui = mostrarTabelaContas('debito');
+						if ((!empty($_SESSION['contas'])) and $possui) { ?>
 						<table class="table">
 							<thead>
 								<th scope="col">Codigo</th>
@@ -192,6 +221,7 @@ session_start();
 								<th scope="col">Tipo Pagamento</th>
 								<th scope="col">Data Pagamento</th>
 								<th scope="col">Editar</th>
+								<th scope="col">Deletar</th>
 							</thead>
 							<tbody>
 								<?php foreach ($_SESSION['contas'] as $contas) { ?>
@@ -226,6 +256,9 @@ session_start();
 														</button>
 													</form>
 												</td>
+												<td>
+													<?php echo botaoTabelaDeletar($contas->getCodigo())?>
+												</td>
 											</tr>
 										<?php } ?>
 									<?php } ?>
@@ -248,7 +281,7 @@ session_start();
 		$("#fornecedor").on("change",function(){
 			var fornecedorSelecionado = $("#fornecedor").val();
 			$.ajax({
-				url : '../php/mostrarProduto.php',
+				url : '../php/mostrarProdutoCompra.php',
 				type: 'POST',
 				data:{id:fornecedorSelecionado},
 				beforeSend: function(){		

@@ -38,7 +38,7 @@
 			</nav>
 			<main class="content">
 				<?php
-					deletar('tamanho','tamanho');
+					deletar('tamanho');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
@@ -46,6 +46,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Tamanho <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os tamanhos dos produtos e sua medida.<br>Ex. 1 litro, 350 grama etc...')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-9">
                                 <div class="card">
                                     <div class="card-header">
@@ -63,15 +64,13 @@
 										<h5 class="card-title mb-0">Medida</h5>
 									</div>
 									<div class="card-body">
-										<select class="form-select mb-3" name="medida" required>
-											<option value="">Selecione a medida</option>
-											<option value="Litro" <?php  if($_GET['medidaEditar'] == 'Litro') { echo 'selected'; };?>>Litro</option>
-											<option value="Mililitro" <?php if($_GET['medidaEditar'] == 'Mililitro' ) { echo 'selected'; };?>>Mililitro</option>
-											<option value="Kilo" <?php if($_GET['medidaEditar'] == 'Kilo' ) { echo 'selected'; };?>>Kilo</option>
-											<option value="Grama" <?php if($_GET['medidaEditar'] == 'Grama' ) { echo 'selected'; };?>>Grama</option>
-											<option value="Metro" <?php if($_GET['medidaEditar'] == 'Metro' ) { echo 'selected'; };?>>Metro</option>
-											<option value="Centimetro" <?php if($_GET['medidaEditar'] == 'Centimetro' ) { echo 'selected'; };?>>Centimetro</option>
-										</select>
+										<input class="form-control" type="text" name="medida" value="<?Php echo isset($_GET['medidaEditar']) ? $_GET['medidaEditar'] : '' ?>" list="listamedidas" required>
+										<datalist id="listamedidas">
+											<option value="Litro">Litro</option>
+											<option value="Mililitro">Mililitro</option>
+											<option value="Kilo">Kilo</option>
+											<option value="Grama">Grama</option>
+										</datalist>  
 									</div>
 								</div>						
 							</div>
@@ -82,13 +81,13 @@
 					</form>
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
@@ -123,7 +122,7 @@
 												</form>
 											</td>
 											<td>
-												<?php echo botaoTabelaDeletar($tamanho->getCodigo(), $tamanho->getTamanho(), 'codigo', 'tamanho')?>
+												<?php echo botaoTabelaDeletar($tamanho->getCodigo())?>
 											</td>
 										</tr>
 									<?php } ?>
@@ -140,6 +139,7 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

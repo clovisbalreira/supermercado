@@ -8,6 +8,7 @@
     ";
     include "../model/Marca.php";
     include "../model/Precos.php";
+    include "../model/Patrimonio.php";
     include "../model/Produto.php";
     include "../model/Promocao.php";
     include "../model/SaborAroma.php";
@@ -75,6 +76,9 @@
     }
     if(!isset($_SESSION['tipoSegmento'])){
     $_SESSION['tipoSegmento'] = array();
+    }
+    if(!isset($_SESSION['patrimonio'])){
+        $_SESSION['patrimonio'] = array();
     }
     header("Refresh:0; view"); 
 ?>

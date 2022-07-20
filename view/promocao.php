@@ -41,7 +41,7 @@
 			</nav>
 			<main class="content">
 				<?php
-					deletar('produto','promocao');
+					deletar('promocao');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
@@ -49,6 +49,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Promoção <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre as promoções do super mercado.<br>Incluindo o preçõ promocional e a data no inicio e fim da promoção.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-6">
 								<div class="card">
 									<div class="card-header">
@@ -125,13 +126,13 @@
 					</form>
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
@@ -175,7 +176,7 @@
 												</form>
 											</td>
 											<td>
-												<?php echo botaoTabelaDeletar($promocao->getCodigo(), $promocao->getProduto(), 'codigo', 'produto')?>
+												<?php echo botaoTabelaDeletar($promocao->getCodigo())?>
 											</td>
 										</tr>
 									<?php } ?>
@@ -192,7 +193,25 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 	<script>
+		$("#fornecedor").on("change",function(){
+			var fornecedorSelecionado = $("#fornecedor").val();
+			$.ajax({
+				url : '../php/mostrarProduto.php',
+				type: 'POST',
+				data:{id:fornecedorSelecionado},
+				beforeSend: function(){		
+					$("#produto").html('Carregando....');
+				},
+				success : function(data){			
+					$("#produto").html(data);
+				},
+				error: function(data){		
+					$("#produto").html("Houve um erro");
+				}
+			})
+		})
 		$("#produto").on("change",function(){
 			var produtoSelecionado = $("#produto").val();
 			$.ajax({

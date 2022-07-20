@@ -19,7 +19,6 @@ session_start();
 	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
 
 	<title>Gestão Supermercado - Home</title>
-
 	<link href="css/app.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -35,7 +34,7 @@ session_start();
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
 							<div class="col-12 col-lg-12">
-								<h1>Login</h1>
+								<h1>Login <span id="mensagem" onmouseover="mostrarInformacoes('Preencha os campos com: <br>O nome do usuário e senha para entrar no sistema.<br>Se não tem se cadastre.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 								<div class="card">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">Nome:</h5>
@@ -57,7 +56,7 @@ session_start();
 								<a href="cadastrar.php">Cadastra-se</a>
 							</div>
 							<div class="col-12 col-lg-12" style="text-align:right;">
-								<button name="cadastroAcesso" value="1"  type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+								<button name="cadastroAcesso" value="1"  type="submit" class="btn btn-primary btn-lg">Entrar</button>
 							</div>
 						</div>
 					</form>
@@ -69,6 +68,7 @@ session_start();
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

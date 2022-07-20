@@ -4,6 +4,7 @@ require_once '../model/Produto.php';
 require_once '../model/TipoPagamento.php';
 include "../controller/deletar.php";
 include "../components/inputs.php";
+include "../php/funcao.php";
 session_start();
 ?>
 <!DOCTYPE html>
@@ -42,7 +43,7 @@ session_start();
 			</nav>
 			<main class="content">
 				<?php
-					deletar('produto','contas');
+					deletar('contas');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
@@ -50,6 +51,7 @@ session_start();
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Contas <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os contas do super mercado.<br>Selecione se a conta vai ser um patrimonio.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-12">
 								<div class="card">
 									<div class="card-header">
@@ -57,7 +59,7 @@ session_start();
 									</div>
 									<div class="card-body">
 										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
-										<input class="form-control" type="text" name="nome" value="<?Php echo isset($_GET['nomeEditar']) ? $_GET['nomeEditar'] : '' ?>" list="listacontas" required>
+										<input class="form-control" type="text" name="nome" value="<?Php echo isset($_GET['nomeEditar']) ? $_GET['nomeEditar'] : '' ?>" list="listacontas" <?php echo isset($_GET['nomeEditar']) ? 'readonly' : '' ?>  required>
 										<datalist id="listacontas">
 											<option value="Luz">Luz</option>
 											<option value="Agua">Agua</option>
@@ -67,7 +69,7 @@ session_start();
 									</div>
 								</div>
 							</div>
-							<div class="col-12 col-lg-4">
+							<div class="col-12 col-lg-3">
 								<div class="card">
 									<div class="card-header">
 										<h5 class="card-title mb-0">Preço</h5>
@@ -92,13 +94,34 @@ session_start();
 									</div>
 								</div>
 							</div>
-							<div class="col-12 col-lg-4">
+							<div class="col-12 col-lg-3">
 								<div class="card">
 									<div class="card-header">
 										<h5 class="card-title mb-0">Dia do pagamento</h5>
 									</div>
 									<div class="card-body">
 										<input type="date" class="form-control" name="diaPagamento" value="<?Php echo isset($_GET['diaPagamentoEditar']) ? $_GET['diaPagamentoEditar'] : date('Y-m-d') ?>" required readonly>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-lg-2">
+								<div class="card">
+									<div class="form-check">
+										<div class="card-header">
+											<h5 class="card-title mb-0">Tipo</h5>
+										</div>
+										<div class="card-body">
+											<input class="form-check-input" type="radio" name="tipo" value="conta" id="flexRadioDefault1" checked>
+											<label class="form-check-label" for="flexRadioDefault1">
+												Conta
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="tipo" value="patrimonio" id="flexRadioDefault2" <?php if ( 'patrimonio' == $_GET['tipoEditar']) { echo 'checked';}; ?>>
+											<label class="form-check-label" for="flexRadioDefault2">
+												Patrimonio
+											</label>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -110,18 +133,21 @@ session_start();
 
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
 					</form>
-					<?php if (!empty($_SESSION['contas'])) { ?>
+					<?php
+						$possui = mostrarTabelaContas('conta');
+						$possuiPatrimonio = mostrarTabelaContas('patrimonio');
+						if ((!empty($_SESSION['contas'])) and ($possui or $possuiPatrimonio)) { ?>
 						<table class="table">
 							<thead>
 								<th scope="col">Codigo</th>
@@ -135,7 +161,7 @@ session_start();
 							<tbody>
 								<?php foreach ($_SESSION['contas'] as $contas) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($contas->getProduto(), $_GET['procurar'])) or (str_contains($contas->getQuantidade(), $_GET['procurar'])) or (str_contains($contas->getPreco(), $_GET['procurar'])) or (str_contains($contas->getData(), $_GET['procurar'])) or (str_contains($contas->getTipoPagamento(), $_GET['procurar'])) or (str_contains($contas->getDataPagamento(), $_GET['procurar']))) { ?>
-										<?php if ($contas->getTipoConta() == 'conta') { ?>
+										<?php if ($contas->getTipoConta() == 'conta' or $contas->getTipoConta() == 'patrimonio') { ?>
 											<tr>
 												<td><?php echo $contas->getCodigo(); ?></td>
 												<td><?php echo $contas->getProduto(); ?></td>
@@ -149,6 +175,7 @@ session_start();
 														<input type="hidden" name="precoEditar" value="<?php echo $contas->getPreco(); ?>">
 														<input type="hidden" name="tipoPagamentoEditar" value="<?php echo $contas->getTipoPagamento(); ?>">
 														<input type="hidden" name="diaPagamentoEditar" value="<?php echo $contas->getDataPagamento(); ?>">
+														<input type="hidden" name="tipoEditar" value="<?php echo $contas->getTipoConta(); ?>">
 														<button type="submit" class="btn btn-primary">
 															<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit align-middle me-2">
 																<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -158,7 +185,7 @@ session_start();
 													</form>
 												</td>
 												<td>
-													<?php echo botaoTabelaDeletar($contas->getCodigo(), $contas->getProduto(), 'codigo', 'produto')?>
+													<?php echo botaoTabelaDeletar($contas->getCodigo())?>
 												</td>
 											</tr>
 										<?php } ?>

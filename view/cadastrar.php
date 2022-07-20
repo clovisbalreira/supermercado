@@ -30,7 +30,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
-							<h1>Cadastre-se</h1>
+							<h1>Cadastre-se <span id="mensagem" onmouseover="mostrarInformacoes('Se cadastre com seu : <br> Nome do usúario e senha para entrar no sistema.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-12">
 								<div class="card">
                                     <div class="card-header">
@@ -61,6 +61,7 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,8 @@
 <?php
 	require_once '../model/Funcionario.php';
 	require_once '../model/Contas.php';
+	require_once '../model/Precos.php';
+	require_once '../model/Estoque.php';
 	require_once '../model/Contrato.php';
 	session_start();
 ?>
@@ -41,13 +43,14 @@
 			<main class="content">
 				<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 					<div class="row">
-						<div class="col-12 col-lg-8">
+						<h1>Saldo <span id="mensagem" onmouseover="mostrarInformacoes('Balanço do super mercado.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
+						<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 							<input type="text" class="form-control" placeholder="Pesquisa ex. <?php echo date('Y-m')?> " name="procurar">
 						</div>
-						<div class="col-12 col-lg-2" style="text-align:right;">
+						<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 							<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 						</div>
-						<div class="col-12 col-lg-2" style="text-align:right;">
+						<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 							<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 						</div>
 					</div>
@@ -62,7 +65,7 @@
 							<thead>
 								<th>Conta</th>
 								<th>Valor</th>
-								<th>Data Pagamento</th>
+								<th>Pagamento</th>
 							</thead>
 							<tbody>
 								<tr>
@@ -97,7 +100,7 @@
 								</tr>
 								<?php foreach($_SESSION['contas'] as $debito){ ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($debito->getDataPagamento(), $_GET['procurar']))) { ?>
-									<?php if($debito->getTipoConta() == 'debito'){?>
+									<?php if($debito->getTipoConta() == 'debito' or $debito->getTipoConta() == 'patrimonio'){?>
 										<tr>
 											<?php $somaDebito = $debito->getPreco();?>
 											<td><?php echo $debito->getProduto()?></td>
@@ -124,12 +127,12 @@
 										<th scope="col" colspan="3">Contratos</th>
 									</tr>
 									<?php foreach($_SESSION['contrato'] as $contrato){ ?>
-										<?php if (empty($_GET['procurar']) or (str_contains($contrato->getDataFim(), $_GET['procurar']))) { ?>
+										<?php if (empty($_GET['procurar']) or (str_contains($contrato->getDataInicio(), $_GET['procurar']))) { ?>
 											<tr>
 												<?php $somaCredito = $contrato->getValor();?>
 												<td><?php echo $contrato->getFornecedor()?></td>
 												<td><?php echo 'R$: '. number_format($somaCredito, 2, ',', '.'); ?></td>
-												<td><?php echo date('d/m/Y', strtotime($contrato->getDataFim())) ?></td>
+												<td><?php echo date('d/m/Y', strtotime($contrato->getDataInicio())) ?></td>
 												<?php $totalCredito += $somaCredito ?>
 											</tr>
 										<?php } ?>
@@ -150,6 +153,36 @@
 										<?php } ?>
 										<?php } ?>
 									<?php }?>
+									<tr>
+										<th scope="col" colspan="3">Patrimônio</th>
+									</tr>
+									<?php foreach($_SESSION['contas'] as $patrimonio){ ?>
+										<?php if($patrimonio->getTipoConta() == 'patrimonio'){?>
+											<tr>
+												<?php $somaCredito = $credito->getPreco();?>
+												<td><?php echo $patrimonio->getProduto()?></td>
+												<td><?php echo 'R$: '. number_format($patrimonio->getPreco(), 2, ',', '.'); ?></td>
+												<td><?php echo date('d/m/Y', strtotime($patrimonio->getDataPagamento())) ?></td>
+												<?php $totalCredito += $somaCredito ?>
+											</tr>
+										<?php } ?>
+									<?php }?>
+									<tr>
+										<th scope="col" colspan="3">Estoque</th>
+									</tr>
+									<?php foreach($_SESSION['estoque'] as $estoque){ 
+										$quantidade = $estoque->getQuantidade(); ?>
+										<?php foreach($_SESSION['precos'] as $preco){?>
+											<tr>
+											<td><?php echo $preco->getProduto()?></td>
+											<?php if($estoque->getProduto() == $preco->getProduto()){?>
+												<?php $somaCredito = $quantidade * $credito->getPreco();?>
+												<td colspan="2"><?php echo 'R$: '. number_format($quantidade * $patrimonio->getPreco(), 2, ',', '.'); ?></td>
+												<?php $totalCredito += $somaCredito ?>
+												<?php } ?>
+											</tr>
+											<?php } ?>
+										<?php } ?>
 									<tr>
 										<th scope="col" colspan="3">Total</th>
 									</tr>
@@ -177,6 +210,7 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

@@ -39,8 +39,7 @@
 			</nav>
 			<main class="content">
 				<?php
-					//função deletar
-					deletar('setor','setor');
+					deletar('setor');
 				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
@@ -48,6 +47,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
+							<h1>Setor <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os setores do super mercado.<br>Ex. Gerente, Diretor etc...')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-12">
 								<div class="card">
 									<div class="card-header">
@@ -55,7 +55,7 @@
 									</div>
 									<div class="card-body">
 										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">	
-										<input type="text" class="form-control" placeholder="Digite o nome do setor" name="setor" value="<?Php echo isset($_GET['nomeEditar']) ? $_GET['nomeEditar'] : '' ?>" required>
+										<input type="text" class="form-control" placeholder="Digite o nome do setor" name="setor" value="<?Php echo isset($_GET['setorEditar']) ? $_GET['setorEditar'] : '' ?>" required>
 									</div>
 								</div>						
 							</div>
@@ -66,13 +66,13 @@
 					</form>
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
@@ -101,7 +101,7 @@
 										</form>
 									</td>
 									<td>
-										<?php echo botaoTabelaDeletar($setor->getCodigo(), $setor->getSetor(), 'codigo', 'setor')?>
+										<?php echo botaoTabelaDeletar($setor->getCodigo())?>
 									</td>
 								</tr>
 								<?php }; ?>	
@@ -118,6 +118,7 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

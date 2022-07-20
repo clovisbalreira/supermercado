@@ -1,5 +1,7 @@
 <?php
 	require_once '../model/Estoque.php';
+	include "../controller/deletar.php";
+	include "../components/inputs.php";
 	session_start();
 ?>
 <!DOCTYPE html>
@@ -31,34 +33,45 @@
 		</nav>
 
 		<div class="main">
+			<?php
+				deletar('estoque');
+			?>
 			<nav class="navbar navbar-expand navbar-light navbar-bg">
 				<?php require_once '../components/header.php'; ?>
 			</nav>
 			<main class="content">
-				<?php
-					if (isset($_GET['codigo']) and isset($_GET['nome'])) {
-						unset($_SESSION['estoque'][$_GET['codigo']]);
-					}
-				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
 						<h1 class="h3 d-inline align-middle"></h1>						
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
-						<div class="col-12 col-lg-9">
+							<h1>Estoque <span id="mensagem" onmouseover="mostrarInformacoes('Controle de estoque.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
+							<div class="col-12 col-lg-5">
                                 <div class="card">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">Produto:</h5>
                                     </div>
                                     <div class="card-body">
 										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
-										<input type="hidden" class="form-control" name="nome" value="<?Php echo isset($_GET['nomeEditar']) ? $_GET['nomeEditar'] : '' ?>" required>
-                                        <input type="text" class="form-control" name="nomeHidden" value="<?Php echo isset($_GET['nomeEditar']) ? $_GET['nomeEditar'] : '' ?>" disabled required>
+										<input type="hidden" class="form-control" name="fornecedor" value="<?Php echo isset($_GET['fornecedorEditar']) ? $_GET['fornecedorEditar'] : '' ?>" required>
+                                        <input type="text" class="form-control" name="fornecedorHidden" value="<?Php echo isset($_GET['fornecedorEditar']) ? $_GET['fornecedorEditar'] : '' ?>" disabled required>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-3">
+							<div class="col-12 col-lg-5">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Produto:</h5>
+                                    </div>
+                                    <div class="card-body">
+										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
+										<input type="hidden" class="form-control" name="produto" value="<?Php echo isset($_GET['produtoEditar']) ? $_GET['produtoEditar'] : '' ?>" required>
+                                        <input type="text" class="form-control" name="produtoHidden" value="<?Php echo isset($_GET['produtoEditar']) ? $_GET['produtoEditar'] : '' ?>" disabled required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-2">
                                 <div class="card">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">Quantidade:</h5>
@@ -69,42 +82,49 @@
                                 </div>
                             </div>
 							<div class="col-12 col-lg-12" style="text-align:right;">
-								<button name="cadastroEstoque" value="1" onclick="liberarQuantidade()" type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+								<?php 
+								if(isset($_GET['fornecedorEditar'])){
+									echo botao("cadastroEstoque");
+									}?>
 							</div>
 						</div>
 					</form>
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
 					</form>
-					<?php if(isset($_SESSION['estoque'])){?>
+					<?php if(!empty($_SESSION['estoque'])){?>
 						<table class="table">
 							<thead>
-								<th>Codigo</th>
-								<th>Produto</th>
-								<th>Quantidade</th>
+								<th scope="col">Codigo</th>
+								<th scope="col">Fornecedor</th>
+								<th scope="col">Produto</th>
+								<th scope="col">Quantidade</th>
 								<th scope="col">Editar</th>
 								<th scope="col">Deletar</th>
 							</thead>
 							<tbody>
 								<?php foreach($_SESSION['estoque'] as $estoque){?>
-									<?php if (empty($_GET['procurar']) or (str_contains($estoque->getProduto(), $_GET['procurar'])) or (str_contains($estoque->getQuantidade(), $_GET['procurar']))) { ?><tr>
+									<?php if (empty($_GET['procurar']) or (str_contains($estoque->getFornecedor(), $_GET['procurar'])) or (str_contains($estoque->getProduto(), $_GET['procurar'])) or (str_contains($estoque->getQuantidade(), $_GET['procurar']))) { ?><tr>
 										<td><?php echo $estoque->getCodigo();?></td>
+										<td><?php echo $estoque->getFornecedor();?></td>
 										<td><?php echo $estoque->getProduto();?></td>
 										<td><?php echo $estoque->getQuantidade();?></td>
 										<td>
 											<form action="#" method="get">
 												<input type="hidden" name="codigoEditar" value="<?php echo $estoque->getCodigo(); ?>">
-												<input type="hidden" name="nomeEditar" value="<?php echo $estoque->getProduto(); ?>">												<input type="hidden" name="quantidadeEditar" value="<?php echo $estoque->getQuantidade(); ?>">
+												<input type="hidden" name="fornecedorEditar" value="<?php echo $estoque->getFornecedor(); ?>">
+												<input type="hidden" name="produtoEditar" value="<?php echo $estoque->getProduto(); ?>">
+												<input type="hidden" name="quantidadeEditar" value="<?php echo $estoque->getQuantidade(); ?>">
 												<button type="submit" class="btn btn-primary">
 													<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit align-middle me-2">
 														<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -114,17 +134,7 @@
 											</form>
 										</td>
 										<td>
-											<form action="#" method="get">
-												<input type="hidden" name="codigo" value="<?php echo $estoque->getCodigo(); ?>">
-												<input type="hidden" name="nome" value="<?php echo $estoque->getProduto(); ?>">
-												<button type="submit" class="btn btn-danger ">
-													<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-delete align-middle me-2">
-														<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-														<line x1="18" y1="9" x2="12" y2="15"></line>
-														<line x1="12" y1="9" x2="18" y2="15"></line>
-													</svg>
-												</button>
-											</form>
+											<?php echo botaoTabelaDeletar($estoque->getCodigo())?>
 										</td>
 									</tr>
 								<?php }?>	
@@ -141,6 +151,7 @@
 		</div>
 	</div>
 	<script src="js/app.js"></script>
+	<script src="../js/funcao.js"></script>
 </body>
 
 </html>

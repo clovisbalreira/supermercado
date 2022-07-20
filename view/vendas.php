@@ -1,8 +1,13 @@
 <?php
 	require_once '../model/Contas.php';
 	require_once '../model/Estoque.php';
+	require_once '../model/Precos.php';
 	require_once '../model/Produto.php';
+	require_once '../model/Fornecedor.php';
 	require_once '../model/TipoPagamento.php';
+	include "../controller/deletar.php";
+	include "../components/inputs.php";
+	include "../php/funcao.php";
 	session_start();
 ?>
 <!DOCTYPE html>
@@ -36,34 +41,70 @@
 			<?php require_once '../components/menu.php'; ?>
 		</nav>
 
-		<div class="main">
+		<div class="main">		
+				<?php
+					$produtoDeletar = '';
+					$quantidadeDeletar = '';
+					foreach($_SESSION['contas'] as $secao){
+						if($_GET['codigo'] == $secao->getCodigo()){
+							$produtoDeletar = $secao->getProduto(); 
+							$quantidadeDeletar = $secao->getQuantidade();
+						}
+					}
+					$indice = 0;
+					foreach($_SESSION['estoque'] as $est){
+						if($produtoDeletar == $est->getProduto()){
+							$_SESSION['estoque'][$indice] = new Estoque($indice, $est->getFornecedor(), $produtoDeletar, $est->getQuantidade() + $quantidadeDeletar);;
+						}
+						$indice ++;
+					}
+					deletar('contas');
+				?>
 			<nav class="navbar navbar-expand navbar-light navbar-bg">
 				<?php require_once '../components/header.php'; ?>
 			</nav>
 			<main class="content">
-				<?php
-					if (isset($_GET['codigo']) and isset($_GET['produto'])) {
-						unset($_SESSION['contas'][$_GET['codigo']]);
-				}
-				?>
 				<div class="container-fluid p-0">
 					<div class="mb-3">
 						<h1 class="h3 d-inline align-middle"></h1>						
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
-							<div class="col-12 col-lg-10">
+							<h1>Vendas <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre as vendas de produtos do super mercado..')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
+							<div class="col-12 col-lg-5">
+								<div class="card">
+									<div class="card-header">
+										<h5 class="card-title mb-0">Fornecedor</h5>
+									</div>
+									<div class="card-body">
+										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
+										<select class="form-select mb-3" id="fornecedor" name="fornecedor" required <?php if(isset($_GET['fornecedorEditar'])){ echo 'disabled';} ?>>
+											<option value="">Selecione o fornecedor</option>
+											<?php foreach( $_SESSION['fornecedor'] as $fornecedor){?>
+												<option value="<?php echo $fornecedor->getNome(); ?>" <?php if ($fornecedor->getNome() == $_GET['fornecedorEditar']) { echo 'selected';} ?>><?php echo $fornecedor->getNome(); ?></option>
+											<?php } ?>
+										</select>
+									</div>
+								</div>														
+							</div>
+							<div class="col-12 col-lg-5">
 								<div class="card">
 									<div class="card-header">
 										<h5 class="card-title mb-0">Produto</h5>
 									</div>
 									<div class="card-body">
-										<input type="hidden" name="codigo" value="<?Php echo isset($_GET['codigoEditar']) ? $_GET['codigoEditar'] : '' ?>">
-										<select class="form-select mb-3" id="produto" name="produto" required>
+										<select class="form-select mb-3" id="produto" name="produto" required <?php if(isset($_GET['produtoEditar'])){ echo 'disabled';} ?>>
 											<option value="">Selecione o produto</option>
-											<?php foreach( $_SESSION['estoque'] as $estoque){?>
-												<option value="<?php echo $estoque->getProduto(); ?>" <?php if ($estoque->getProduto() == $_GET['produtoEditar']) { echo 'selected';} ?>><?php echo $estoque->getProduto(); ?></option>
-											<?php } ?>
+											<?php 
+												if(isset($_GET['produtoEditar'])){
+													foreach( $_SESSION['estoque'] as $estoque){
+														if($estoque->getFornecedor() == $_GET['fornecedorEditar']){
+											?>
+															<option value="<?php echo $estoque->getProduto(); ?>" <?php if ($estoque->getProduto() == $_GET['produtoEditar']) { echo 'selected';} ?>><?php echo $estoque->getProduto(); ?></option>
+													<?php }
+													}
+												} 
+											?>
 										</select>
 									</div>
 								</div>
@@ -106,8 +147,8 @@
 									<div class="card-body">
 										<select class="form-select mb-3" name="tipoPagamento" required>
 											<option value="">Selecione o tipo de pagamento</option>
-											<?php foreach( $_SESSION['tipoPagamento'] as $tipopagamento){?>
-												<option value="<?php echo $tipopagamento->getTipo().' - Parcelas '.$tipopagamento->getParcelas().' - Dias '.$tipopagamento->getDias(); ?>" <?php if ($tipopagamento->getTipo() == $_GET['pagamentoEditar']) { echo 'selected';}; ?>><?php echo $tipopagamento->getTipo().' - Parcelas '.$tipopagamento->getParcelas().' - Dias '.$tipopagamento->getDias(); ?></option>
+											<?php foreach ($_SESSION['tipoPagamento'] as $tipopagamento) { ?>
+												<option value="<?php echo $tipopagamento->getTipo().' - Parcelas '.$tipopagamento->getParcelas().' - Dias '.$tipopagamento->getDias(); ?>" <?php if ($tipopagamento->getTipo().' - Parcelas '.$tipopagamento->getParcelas().' - Dias '.$tipopagamento->getDias() == $_GET['pagamentoEditar']) { echo 'selected';}; ?>><?php echo $tipopagamento->getTipo().' - Parcelas '.$tipopagamento->getParcelas().' - Dias '.$tipopagamento->getDias(); ?></option>
 											<?php } ?>
 										</select>
 									</div>
@@ -124,28 +165,31 @@
 								</div>
 							</div>
 							<div class="col-12 col-lg-12" style="text-align:right;">
-								<button name="cadastroVendas" value="1" type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+								<?php echo botao("cadastroVendas")?>
 							</div>
 						</div>
 					</form>
 				
 					<form action="#" method="get" style="margin-top: 20px; margin-bottom: 20px;">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-8" style="margin-bottom: 10px;">
 								<input type="text" class="form-control" placeholder="Pesquisa" name="procurar">
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="cancel" class="btn btn-primary btn-lg-12">Mostrar tudo</button>
 							</div>
-							<div class="col-12 col-lg-2" style="text-align:right;">
+							<div class="col-12 col-lg-2" style="text-align:right; margin-bottom: 10px;">
 								<button type="submit" class="btn btn-primary btn-lg-12">Pesquisar</button>
 							</div>
 						</div>
 					</form>
-					<?php if (!empty($_SESSION['contas'])) { ?>
+					<?php
+						$possui = mostrarTabelaContas('credito');
+						if ((!empty($_SESSION['contas'])) and $possui) { ?>
 						<table class="table">
 							<thead>
 								<th scope="col">Codigo</th>
+								<th scope="col">Fornecedor</th>
 								<th scope="col">Produto</th>
 								<th scope="col">Quantidade</th>
 								<th scope="col">Preço</th>
@@ -158,11 +202,12 @@
 							</thead>
 							<tbody>
 								<?php foreach ($_SESSION['contas'] as $contas) { ?>
-									<?php if (empty($_GET['procurar']) or (str_contains($contas->getProduto(), $_GET['procurar'])) or (str_contains($contas->getQuantidade(), $_GET['procurar'])) or (str_contains($contas->getPreco(), $_GET['procurar'])) or (str_contains($contas->getData(), $_GET['procurar'])) or (str_contains($contas->getTipoPagamento(), $_GET['procurar'])) or (str_contains($contas->getDataPagamento(), $_GET['procurar'])) ) { ?>
+									<?php if (empty($_GET['procurar']) or (str_contains($contas->getFornecedor(), $_GET['procurar'])) or (str_contains($contas->getProduto(), $_GET['procurar'])) or (str_contains($contas->getQuantidade(), $_GET['procurar'])) or (str_contains($contas->getPreco(), $_GET['procurar'])) or (str_contains($contas->getData(), $_GET['procurar'])) or (str_contains($contas->getTipoPagamento(), $_GET['procurar'])) or (str_contains($contas->getDataPagamento(), $_GET['procurar'])) ) { ?>
                                         <?php if($contas->getTipoConta() == 'credito'){ ?>
 										<tr>
                                             <?php $soma = $contas->getPreco() / $contas->getQuantidade() ; ?>
 											<td><?php echo $contas->getCodigo(); ?></td>
+											<td><?php echo $contas->getFornecedor(); ?></td>
 											<td><?php echo $contas->getProduto(); ?></td>
 											<td><?php echo $contas->getQuantidade() ?></td>
 											<td><?php echo 'R$: ' . number_format($soma, 2, ',', '.'); ?></td>
@@ -173,6 +218,7 @@
 											<td>
                                                 <form action="#" method="get">
                                                     <input type="hidden" name="codigoEditar" value="<?php echo $contas->getCodigo(); ?>">
+													<input type="hidden" name="fornecedorEditar" value="<?php echo $contas->getFornecedor(); ?>">
 													<input type="hidden" name="produtoEditar" value="<?php echo $contas->getProduto(); ?>">
 													<input type="hidden" name="quantidadeEditar" value="<?php echo $contas->getQuantidade(); ?>">
 													<input type="hidden" name="precoEditar" value="<?php echo $soma; ?>">
@@ -188,17 +234,7 @@
 												</form>
 											</td>
 											<td>
-                                                <form action="#" method="get">
-                                                    <input type="hidden" name="codigo" value="<?php echo $contas->getCodigo(); ?>">
-													<input type="hidden" name="produto" value="<?php echo $contas->getProduto(); ?>">
-													<button type="submit" class="btn btn-danger ">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-delete align-middle me-2">
-                                                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-															<line x1="18" y1="9" x2="12" y2="15"></line>
-															<line x1="12" y1="9" x2="18" y2="15"></line>
-														</svg>
-													</button>
-												</form>
+												<?php echo botaoTabelaDeletar($contas->getCodigo())?>
 											</td>
 										</tr>
                                         <?php } ?>
@@ -219,6 +255,23 @@
 	<script src="js/app.js"></script>
 	<script src="../js/funcao.js"></script>
 	<script>
+		$("#fornecedor").on("change",function(){
+			var fornecedorSelecionado = $("#fornecedor").val();
+			$.ajax({
+				url : '../php/mostrarEstoque.php',
+				type: 'POST',
+				data:{id:fornecedorSelecionado},
+				beforeSend: function(){		
+					$("#produto").html('Carregando....');
+				},
+				success : function(data){	
+					$("#produto").html(data);
+				},
+				error: function(data){		
+					$("#produto").html("Houve um erro");
+				}
+			})
+		})
 		$("#produto").on("change",function(){
 			var produtoSelecionado = $("#produto").val();
 			$.ajax({
