@@ -4,7 +4,7 @@ function precoContas(){
     precototal = document.getElementById('precototal')
     soma = parseInt(quantidade) * parseFloat(preco)
     if(quantidade != '' && preco != ''){
-        precototal.setAttribute("value", soma)
+        precototal.setAttribute("value", 9)
     }
 }
 

@@ -115,7 +115,7 @@
 										<h5 class="card-title mb-0">Preço Total:</h5>
 									</div>
 									<div class="card-body">
-										<input type="number" step="0.01" class="form-control" placeholder="Valor total" id="precototal" name="precototal" value="<?Php echo isset($_GET['precoTotalEditar']) ? $_GET['precoTotalEditar'] * $_GET['quantidadeEditar']  : '' ?>" disabled>
+										<input type="number" step="0.01" class="form-control" placeholder="Valor total" id="precototal" name="precototal" value="<?Php echo isset($_GET['precoTotalEditar']) ? number_format($_GET['precoTotalEditar'] * $_GET['quantidadeEditar'],2)  : '' ?>" disabled>
 									</div>
 								</div>
 							</div>
@@ -203,7 +203,7 @@
 				beforeSend: function(){		
 					$("#produto").html('Carregando....');
 				},
-				success : function(data){			
+				success : function(data){		
 					$("#produto").html(data);
 				},
 				error: function(data){		

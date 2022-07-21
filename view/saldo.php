@@ -142,19 +142,25 @@
 									<tr>
 										<th scope="col" colspan="3">Vendas</th>
 									</tr>
-									<?php foreach($_SESSION['contas'] as $credito){ ?>
-										<?php if (empty($_GET['procurar']) or (str_contains($credito->getDataPagamento(), $_GET['procurar']))) { ?>
-										<?php if($credito->getTipoConta() == 'credito'){?>
+									<?php foreach($_SESSION['estoque'] as $estoque){?>
+										<?php $somaCredito = 0;?>
+											<?php foreach($_SESSION['contas'] as $credito){ ?>
+												<?php if (empty($_GET['procurar']) or (str_contains($credito->getDataPagamento(), $_GET['procurar']))) { ?>
+													<?php if($credito->getTipoConta() == 'credito'){?>
+														<?php if($estoque->getProduto() == $credito->getProduto()){?>
+															<?php $somaCredito = $credito->getPreco();?>
+															<?php $totalCredito += $somaCredito ?>
+															<?php $totalCreditoLiquido += $somaCredito ?>
+														<?php } ?>
+													<?php }?>
+												<?php }?>
+											<?php }?>
+										<?php if($somaCredito > 0){?>
 											<tr>
-												<?php $somaCredito = $credito->getPreco();?>
-												<td><?php echo $credito->getProduto()?></td>
-												<td><?php echo date('d/m/Y', strtotime($credito->getDataPagamento())) ?></td>
+												<td colspan="2"><?php echo $estoque->getProduto()?></td>
 												<td><?php echo 'R$: '. number_format($somaCredito, 2, ',', '.'); ?></td>
-												<?php $totalCredito += $somaCredito ?>
-												<?php $totalCreditoLiquido += $somaCredito ?>
 											</tr>
-										<?php } ?>
-										<?php } ?>
+										<?php }?>
 									<?php }?>
 									<tr>
 										<th scope="col" colspan="3">Patrimônio</th>
