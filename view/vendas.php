@@ -70,7 +70,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
-							<h1>Vendas <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre as vendas de produtos do super mercado..')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
+							<h1>Vendas <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre as vendas de produtos do super mercado.<br>É adicionado mais 10% sobre o valor da compra.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-5">
 								<div class="card">
 									<div class="card-header">
@@ -125,7 +125,7 @@
 										<h5 class="card-title mb-0">Preço unitario:</h5>
 									</div>
 									<div class="card-body">
-										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" min="0">
+										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? number_format($_GET['precoEditar'],2) : '' ?>" min="0">
 									</div>
 								</div>
 							</div>
@@ -135,7 +135,7 @@
 										<h5 class="card-title mb-0">Preço Total:</h5>
 									</div>
 									<div class="card-body">
-										<input type="number" step="0.01" class="form-control" placeholder="Valor total" id="precototal" name="precototal" value="<?Php echo isset($_GET['precoTotalEditar']) ? $_GET['precoTotalEditar'] : '' ?>" readonly>
+										<input type="number" step="0.01" class="form-control" placeholder="Valor total" id="precototal" name="precototal" value="<?Php echo isset($_GET['precoTotalEditar']) ? number_format($_GET['precoTotalEditar'],2) : '' ?>" readonly>
 									</div>
 								</div>
 							</div>
@@ -188,7 +188,6 @@
 						if ((!empty($_SESSION['contas'])) and $possui) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Produto</th>
 								<th scope="col">Quantidade</th>
@@ -205,10 +204,19 @@
 									<?php if (empty($_GET['procurar']) or (str_contains($contas->getFornecedor(), $_GET['procurar'])) or (str_contains($contas->getProduto(), $_GET['procurar'])) or (str_contains($contas->getQuantidade(), $_GET['procurar'])) or (str_contains($contas->getPreco(), $_GET['procurar'])) or (str_contains($contas->getData(), $_GET['procurar'])) or (str_contains($contas->getTipoPagamento(), $_GET['procurar'])) or (str_contains($contas->getDataPagamento(), $_GET['procurar'])) ) { ?>
                                         <?php if($contas->getTipoConta() == 'credito'){ ?>
 										<tr>
-                                            <?php $soma = $contas->getPreco() / $contas->getQuantidade() ; ?>
-											<td><?php echo $contas->getCodigo(); ?></td>
-											<td><?php echo $contas->getFornecedor(); ?></td>
-											<td><?php echo $contas->getProduto(); ?></td>
+                                            <?php 
+												$soma = $contas->getPreco() / $contas->getQuantidade() ; ?>
+											<td <?php if($contas->getFornecedor() == ''){ echo 'colspan="2"';} ?>>
+											<?php
+												if($contas->getFornecedor() == ''){
+													echo $contas->getProduto(); 
+												}else{
+													echo $contas->getFornecedor(); 
+												} 
+											?></td>
+											<?php if($contas->getFornecedor() != ''){?>
+												<td><?php echo $contas->getProduto(); ?></td>
+											<?php } ?>
 											<td><?php echo $contas->getQuantidade() ?></td>
 											<td><?php echo 'R$: ' . number_format($soma, 2, ',', '.'); ?></td>
 											<td><?php echo 'R$: ' . number_format($contas->getPreco(), 2, ',', '.'); ?></td>

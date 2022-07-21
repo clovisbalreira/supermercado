@@ -167,7 +167,6 @@
 					<?php if (!empty($_SESSION['produto'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Marca</th>
 								<th scope="col">Segmento</th>
@@ -181,7 +180,6 @@
 								<?php foreach ($_SESSION['produto'] as $produto) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($produto->getFornecedor(), $_GET['procurar'])) or (str_contains($produto->getMarca(), $_GET['procurar'])) or (str_contains($produto->getTipoSegmento(), $_GET['procurar'])) or (str_contains($produto->getTipoProduto(), $_GET['procurar'])) or (str_contains($produto->getSaborAroma(), $_GET['procurar'])) or (str_contains($produto->getTamanho(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $produto->getCodigo(); ?></td>
 											<td><?php echo $produto->getFornecedor(); ?></td>
 											<td><?php echo $produto->getMarca(); ?></td>
 											<td><?php echo $produto->getTipoSegmento(); ?></td>

@@ -126,7 +126,6 @@ session_start();
 					<?php if (!empty($_SESSION['funcionario'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
 								<th scope="col">Data de nascimento</th>
 								<th scope="col">C.P.F.</th>
@@ -139,7 +138,6 @@ session_start();
 								<?php foreach ($_SESSION['funcionario'] as $funcionario) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($funcionario->getNome(), $_GET['procurar'])) or (str_contains($funcionario->getNascimento(), $_GET['procurar'])) or (str_contains($funcionario->getCpf(), $_GET['procurar'])) or (str_contains($funcionario->getSetor(), $_GET['procurar'])) or (str_contains($funcionario->getSalario(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $funcionario->getCodigo(); ?></td>
 											<td><?php echo $funcionario->getNome(); ?></td>
 											<td><?php echo date('d/m/Y', strtotime($funcionario->getNascimento())) ?></td>
 											<td><?php echo $funcionario->getCpf(); ?></td>

@@ -95,7 +95,11 @@ session_start();
 								</div>
 							</div>
 							<div class="col-12 col-lg-12" style="text-align:right;">
-								<?php echo botao("cadastroPatrimonio")?>
+								<?php 
+									if(isset($_GET['codigoEditar'])){
+										echo botao("cadastroPatrimonio");
+									}
+								?>
 							</div>
 						</div>
 					</form>
@@ -117,7 +121,6 @@ session_start();
 						if (!empty($_SESSION['patrimonio'])){ ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
 								<th scope="col">Valor</th>
 								<th scope="col">Editar</th>
@@ -127,7 +130,6 @@ session_start();
 								<?php foreach ($_SESSION['patrimonio'] as $patrimonio) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($patrimonio->getNome(), $_GET['procurar'])) or (str_contains($patrimonio->getValor(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $patrimonio->getCodigo(); ?></td>
 											<td><?php echo $patrimonio->getNome(); ?></td>
 											<td><?php echo 'R$: ' . number_format($patrimonio->getValor(), 2, ',', '.'); ?></td>
 											<td>

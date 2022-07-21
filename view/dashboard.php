@@ -44,6 +44,7 @@ session_start();
 					<div class="row">
 						<?php
 							$saldo = 0;
+							$saldoLiquido = 0;
 							$patrimonio = 0;
 							$compras = 0;
 							$vendas = 0;
@@ -57,44 +58,66 @@ session_start();
 									if($conta->getTipoConta() == 'credito'){
 										$vendas += $conta->getPreco();
 										$saldo += $conta->getPreco();
+										$saldoLiquido += $conta->getPreco();
 									}
 									if($conta->getTipoConta() == 'debito' or $conta->getTipoConta() == 'patrimonio'){
 										$compras += $conta->getPreco();
 										$saldo -= $conta->getPreco();
+										if($conta->getTipoConta() == 'debito'){
+											$saldoLiquido -= $conta->getPreco();
+										}
 									}
 									if($conta->getTipoConta() == 'conta'){
 										$contas += $conta->getPreco();
 										$saldo -= $conta->getPreco();
+										$saldoLiquido -= $conta->getPreco();
 									}
 								}
 								if($conta->getTipoConta() == 'patrimonio'){
 									$patrimonio += $conta->getPreco();
 									$saldo += $conta->getPreco();
+									if(date('Y-m',strtotime($conta->getDataPagamento()) == date('Y-m'))){
+										$saldoLiquido -= $conta->getPreco();
+									}
 								}	
 							}
 							
 							foreach($_SESSION['contrato'] as $contrato){
-								$contratos += $contrato->getValor();
-								$saldo += $contrato->getValor();
+								if (str_contains($contrato->getDataInicio(), date('Y-m'))) {
+									$contratos += $contrato->getValor();
+									$saldo += $contrato->getValor();
+									$saldoLiquido += $contrato->getValor();
+								}
 							}
 
 							foreach($_SESSION['funcionario'] as $funcionario){
 								$funcionarios += $funcionario->getSalario();
 								$saldo -= $funcionario->getSalario();
+								$saldoLiquido -= $funcionario->getSalario();
 							}
 
-							foreach($_SESSION['estoque'] as $estoque){
-								$quantidade = $estoque->getQuantidade();
-								foreach($_SESSION['precos'] as $preco){
+							foreach($_SESSION['precos'] as $preco){
+								foreach($_SESSION['estoque'] as $estoque){
 									if($estoque->getProduto() == $preco->getProduto()){
-										$estoqueValor += $quantidade * $preco->getPreco();
+										$estoqueValor += $estoque->getQuantidade() * $preco->getPreco();
+										$saldo += $estoque->getQuantidade() * $preco->getPreco();
 									}
 								}
 							}
 						?>
+						<?php ?>
+						<h1>Super Mercado <span id="mensagem" onmouseover="mostrarInformacoes('Visualize a renda do super mercado de <?php echo date('m');?> de <?php echo date('Y');?>.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 
-						<h1>Super Mercado <span id="mensagem" onmouseover="mostrarInformacoes('Visualize a renda do super mercado do mês.')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
-
+						<div class="col-12 col-lg-6">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Saldo Liquido</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: <?php echo $saldoLiquido < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($saldoLiquido, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
 						<div class="col-12 col-lg-6">
 							<div class="card">
 								<div class="card-header">
@@ -105,43 +128,13 @@ session_start();
 								</div>
 							</div>
 						</div>
-						<div class="col-12 col-lg-6">
+						<div class="col-12 col-lg-3">
 							<div class="card">
 								<div class="card-header">
 									<h5 class="card-title mb-0">Patrimônio</h5>
 								</div>
 								<div class="card-body">
-								<p style="color: <?php echo $patrimonio < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($patrimonio, 2, ',', '.') ?></p>
-								</div>
-							</div>
-						</div>
-						<div class="col-12 col-lg-4">
-							<div class="card">
-								<div class="card-header">
-									<h5 class="card-title mb-0">Compras</h5>
-								</div>
-								<div class="card-body">
-									<p style="color: <?php echo $compras < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($compras, 2, ',', '.') ?></p>
-								</div>
-							</div>
-						</div>
-						<div class="col-12 col-lg-4">
-							<div class="card">
-								<div class="card-header">
-									<h5 class="card-title mb-0">Vendas</h5>
-								</div>
-								<div class="card-body">
-									<p style="color: <?php echo $vendas < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($vendas, 2, ',', '.') ?></p>
-								</div>
-							</div>
-						</div>
-						<div class="col-12 col-lg-4">
-							<div class="card">
-								<div class="card-header">
-									<h5 class="card-title mb-0">Contas</h5>
-								</div>
-								<div class="card-body">
-									<p style="color: <?php echo $contas < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($contas, 2, ',', '.') ?></p>
+								<p style="color: green ; "><?php echo 'R$: '. number_format($patrimonio, 2, ',', '.') ?></p>
 								</div>
 							</div>
 						</div>
@@ -151,11 +144,21 @@ session_start();
 									<h5 class="card-title mb-0">Contratos</h5>
 								</div>
 								<div class="card-body">
-									<p style="color: <?php echo $contratos < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($contratos, 2, ',', '.') ?></p>
+									<p style="color: green ; "><?php echo 'R$: '. number_format($contratos, 2, ',', '.') ?></p>
 								</div>
 							</div>
 						</div>
-						<div class="col-12 col-lg-6">
+						<div class="col-12 col-lg-3">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Vendas</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: green ; "><?php echo 'R$: '. number_format($vendas, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-3">
 							<div class="card">
 								<div class="card-header">
 									<h5 class="card-title mb-0">Estoque</h5>
@@ -165,13 +168,33 @@ session_start();
 								</div>
 							</div>
 						</div>
-						<div class="col-12 col-lg-3">
+						<div class="col-12 col-lg-4">
 							<div class="card">
 								<div class="card-header">
 									<h5 class="card-title mb-0">Funcionarios</h5>
 								</div>
 								<div class="card-body">
-									<p style="color: <?php echo $funcionarios < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($funcionarios, 2, ',', '.') ?></p>
+									<p style="color: red ; "><?php echo 'R$: '. number_format($funcionarios, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Compras</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: red ; "><?php echo 'R$: '. number_format($compras, 2, ',', '.') ?></p>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Contas</h5>
+								</div>
+								<div class="card-body">
+									<p style="color: red ; "><?php echo 'R$: '. number_format($contas, 2, ',', '.') ?></p>
 								</div>
 							</div>
 						</div>

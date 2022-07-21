@@ -100,7 +100,6 @@
 					<?php if (!empty($_SESSION['tipoPagamento'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
 								<th scope="col">Parcelas</th>
 								<th scope="col">Dias da primeira parcela</th>
@@ -111,7 +110,6 @@
 								<?php foreach ($_SESSION['tipoPagamento'] as $tipoPagamento) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($tipoPagamento->getTipo(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $tipoPagamento->getCodigo(); ?></td>
 											<td><?php echo $tipoPagamento->getTipo(); ?></td>
 											<td><?php echo $tipoPagamento->getParcelas(); ?></td>
 											<td><?php echo $tipoPagamento->getDias(); ?></td>

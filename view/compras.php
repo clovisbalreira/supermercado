@@ -148,7 +148,7 @@ session_start();
 										<h5 class="card-title mb-0">Preço caixa:</h5>
 									</div>
 									<div class="card-body">
-										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" max="<?php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" min="0" required>
+										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" max="<?php echo isset($_GET['precoEditar']) ? number_format($_GET['precoEditar'],2) : '' ?>" min="0" required>
 									</div>
 								</div>
 							</div>
@@ -158,7 +158,7 @@ session_start();
 										<h5 class="card-title mb-0">Preço Total:</h5>
 									</div>
 									<div class="card-body">
-										<input type="number" step="0.01" class="form-control" placeholder="Valor total" id="precototal" name="precototal" value="<?Php echo isset($_GET['precoTotalEditar']) ? $_GET['precoTotalEditar'] : '' ?>" readonly>
+										<input type="number" step="0.01" class="form-control" placeholder="Valor total" id="precototal" name="precototal" value="<?Php echo isset($_GET['precoTotalEditar']) ? number_format($_GET['precoTotalEditar'],2) : '' ?>" readonly>
 									</div>
 								</div>
 							</div>

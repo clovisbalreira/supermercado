@@ -94,7 +94,6 @@
 					<?php if (!empty($_SESSION['tipoSegmento'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Editar</th>
@@ -104,7 +103,6 @@
 								<?php foreach ($_SESSION['tipoSegmento'] as $tipoSegmento) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($tipoSegmento->getNome(), $_GET['procurar'])) or (str_contains($tipoSegmento->getSegmento(), $_GET['procurar'])) ) { ?>
 										<tr>
-											<td><?php echo $tipoSegmento->getCodigo(); ?></td>
 											<td><?php echo $tipoSegmento->getNome(); ?></td>
 											<td><?php echo $tipoSegmento->getSegmento() ?></td>
 											<td>

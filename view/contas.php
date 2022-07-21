@@ -75,7 +75,7 @@ session_start();
 										<h5 class="card-title mb-0">Preço</h5>
 									</div>
 									<div class="card-body">
-										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? $_GET['precoEditar'] : '' ?>" min="0" required>
+										<input onkeyup="precoContas()" onchange="precoContas()" type="number" step="0.01" class="form-control" placeholder="Digite o valor" id="preco" name="preco" value="<?Php echo isset($_GET['precoEditar']) ? number_format($_GET['precoEditar'],2) : '' ?>" min="0" required>
 									</div>
 								</div>
 							</div>
@@ -150,7 +150,6 @@ session_start();
 						if ((!empty($_SESSION['contas'])) and ($possui or $possuiPatrimonio)) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Produto</th>
 								<th scope="col">Preço</th>
 								<th scope="col">Tipo Pagamento</th>
@@ -163,7 +162,6 @@ session_start();
 									<?php if (empty($_GET['procurar']) or (str_contains($contas->getProduto(), $_GET['procurar'])) or (str_contains($contas->getQuantidade(), $_GET['procurar'])) or (str_contains($contas->getPreco(), $_GET['procurar'])) or (str_contains($contas->getData(), $_GET['procurar'])) or (str_contains($contas->getTipoPagamento(), $_GET['procurar'])) or (str_contains($contas->getDataPagamento(), $_GET['procurar']))) { ?>
 										<?php if ($contas->getTipoConta() == 'conta' or $contas->getTipoConta() == 'patrimonio') { ?>
 											<tr>
-												<td><?php echo $contas->getCodigo(); ?></td>
 												<td><?php echo $contas->getProduto(); ?></td>
 												<td><?php echo 'R$: ' . number_format($contas->getPreco(), 2, ',', '.'); ?></td>
 												<td><?php echo $contas->getTipoPagamento() ?></td>

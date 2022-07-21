@@ -80,7 +80,7 @@
 													foreach( $_SESSION['produto'] as $produto){
 														if($produto->getFornecedor() == $_GET['fornecedorEditar']){
 											?>
-															<option value="<?php echo $produto->getmarca() . " - " . $produto->getSaborAroma() . " - " . $produto->getTamanho(); ?>" <?php if ($produto->getmarca() . " - " . $produto->getSaborAroma() . " - " . $produto->getTamanho() == $_GET['produtoEditar']) { echo 'selected';} ?>><?php echo $produto->getmarca() . " - " . $produto->getSaborAroma() . " - " . $produto->getTamanho(); ?></option>
+															<option value="<?php echo $produto->getmarca() . " - " . $produto->getTipoProduto() . " - " . $produto->getSaborAroma() . " - " . $produto->getTamanho(); ?>" <?php if ($produto->getmarca() . " - " . $produto->getTipoProduto() . " - " . $produto->getSaborAroma() . " - " . $produto->getTamanho() == $_GET['produtoEditar']) { echo 'selected';} ?>><?php echo $produto->getmarca() . " - " . $produto->getTipoProduto() . " - " . $produto->getSaborAroma() . " - " . $produto->getTamanho(); ?></option>
 													<?php }
 													}
 												} 
@@ -140,7 +140,6 @@
 					<?php if (!empty($_SESSION['precos'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Produto</th>
 								<th scope="col">Quantidade na caixa</th>
@@ -154,7 +153,6 @@
 									<?php if (empty($_GET['procurar']) or (str_contains($preco->getFornecedor(), $_GET['procurar'])) or (str_contains($preco->getProduto(), $_GET['procurar'])) or (str_contains($preco->getCaixa(), $_GET['procurar'])) or (str_contains($preco->getPreco(), $_GET['procurar']))) { ?>
 										<tr>
 											<?php $soma = $preco->getPrecoTotal() / $preco->getCaixa() ; ?>
-											<td><?php echo $preco->getCodigo(); ?></td>
 											<td><?php echo $preco->getFornecedor(); ?></td>
 											<td><?php echo $preco->getProduto(); ?></td>
 											<td><?php echo $preco->getCaixa() ?></td>

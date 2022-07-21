@@ -2,6 +2,7 @@
 	require_once '../model/Funcionario.php';
 	require_once '../model/Contas.php';
 	require_once '../model/Precos.php';
+	require_once '../model/Patrimonio.php';
 	require_once '../model/Estoque.php';
 	require_once '../model/Contrato.php';
 	session_start();
@@ -60,12 +61,12 @@
 						<h2>Debito</h2>
 						<?php $totalDebito = 0;?>
 						<?php $totalCredito = 0;?>
-						<?php $totalDebito += 0; ?>
+						<?php $totalCreditoLiquido = 0;?>
 						<table class="table">
 							<thead>
-								<th>Conta</th>
-								<th>Valor</th>
-								<th>Pagamento</th>
+								<th scope="col">Conta</th>
+								<th scope="col">Data Pagamento</th>
+								<th scope="col">Valor</th>
 							</thead>
 							<tbody>
 								<tr>
@@ -74,8 +75,8 @@
 								<?php foreach($_SESSION['funcionario'] as $funcionario){ ?>
 									<?php $somaDebito = $funcionario->getSalario();?>
 										<tr>
-											<td><?php echo $funcionario->getNome();?></td>
-											<td colspan="2"><?php echo 'R$: '. number_format($funcionario->getSalario(), 2, ',', '.');?></td>
+											<td colspan="2"><?php echo $funcionario->getNome();?></td>
+											<td><?php echo 'R$: '. number_format($funcionario->getSalario(), 2, ',', '.');?></td>
 										</tr>
 									<?php $totalDebito += $somaDebito; ?>
 								<?php } ?>
@@ -88,8 +89,8 @@
 										<tr>
 											<?php $somaConta = $conta->getPreco();?>
 											<td><?php echo $conta->getProduto()?></td>
-											<td><?php echo 'R$: '. number_format($conta->getPreco(), 2, ',', '.'); ?></td>
 											<td><?php echo date('d/m/Y', strtotime($conta->getDataPagamento())) ?></td>								
+											<td><?php echo 'R$: '. number_format($conta->getPreco(), 2, ',', '.'); ?></td>
 											<?php $totalDebito += $somaConta ?>
 										</tr>
 									<?php } ?>
@@ -104,8 +105,8 @@
 										<tr>
 											<?php $somaDebito = $debito->getPreco();?>
 											<td><?php echo $debito->getProduto()?></td>
-											<td><?php echo 'R$: '. number_format($somaDebito, 2, ',', '.'); ?></td>
 											<td><?php echo date('d/m/Y', strtotime($debito->getDataPagamento())) ?></td>								
+											<td><?php echo 'R$: '. number_format($somaDebito, 2, ',', '.'); ?></td>
 											<?php $totalDebito += $somaDebito ?>
 										</tr>
 									<?php } ?>
@@ -119,8 +120,8 @@
 							<table class="table">
 								<thead>
 									<th scope="col">Conta</th>
+									<th scope="col">Data Pagamento</th>
 									<th scope="col">Valor</th>
-								<th>Data Pagamento</th>
 								</thead>
 								<tbody>
 									<tr>
@@ -131,9 +132,10 @@
 											<tr>
 												<?php $somaCredito = $contrato->getValor();?>
 												<td><?php echo $contrato->getFornecedor()?></td>
-												<td><?php echo 'R$: '. number_format($somaCredito, 2, ',', '.'); ?></td>
 												<td><?php echo date('d/m/Y', strtotime($contrato->getDataInicio())) ?></td>
+												<td><?php echo 'R$: '. number_format($somaCredito, 2, ',', '.'); ?></td>
 												<?php $totalCredito += $somaCredito ?>
+												<?php $totalCreditoLiquido += $somaCredito ?>
 											</tr>
 										<?php } ?>
 									<?php }?>
@@ -146,9 +148,10 @@
 											<tr>
 												<?php $somaCredito = $credito->getPreco();?>
 												<td><?php echo $credito->getProduto()?></td>
-												<td><?php echo 'R$: '. number_format($somaCredito, 2, ',', '.'); ?></td>
 												<td><?php echo date('d/m/Y', strtotime($credito->getDataPagamento())) ?></td>
+												<td><?php echo 'R$: '. number_format($somaCredito, 2, ',', '.'); ?></td>
 												<?php $totalCredito += $somaCredito ?>
+												<?php $totalCreditoLiquido += $somaCredito ?>
 											</tr>
 										<?php } ?>
 										<?php } ?>
@@ -156,48 +159,49 @@
 									<tr>
 										<th scope="col" colspan="3">Patrimônio</th>
 									</tr>
-									<?php foreach($_SESSION['contas'] as $patrimonio){ ?>
-										<?php if($patrimonio->getTipoConta() == 'patrimonio'){?>
-											<tr>
-												<?php $somaCredito = $credito->getPreco();?>
-												<td><?php echo $patrimonio->getProduto()?></td>
-												<td><?php echo 'R$: '. number_format($patrimonio->getPreco(), 2, ',', '.'); ?></td>
-												<td><?php echo date('d/m/Y', strtotime($patrimonio->getDataPagamento())) ?></td>
-												<?php $totalCredito += $somaCredito ?>
-											</tr>
-										<?php } ?>
+									<?php foreach($_SESSION['patrimonio'] as $patrimonio){ ?>
+										<tr>
+											<?php $somaPatrimonio = $patrimonio->getValor();?>
+											<td colspan="2"><?php echo $patrimonio->getNome()?></td>
+											<td><?php echo 'R$: '. number_format($patrimonio->getValor(), 2, ',', '.'); ?></td>
+											<?php $totalCredito += $somaPatrimonio ?>
+										</tr>
 									<?php }?>
 									<tr>
 										<th scope="col" colspan="3">Estoque</th>
 									</tr>
-									<?php foreach($_SESSION['estoque'] as $estoque){ 
-										$quantidade = $estoque->getQuantidade(); ?>
 										<?php foreach($_SESSION['precos'] as $preco){?>
-											<tr>
-											<td><?php echo $preco->getProduto()?></td>
-											<?php if($estoque->getProduto() == $preco->getProduto()){?>
-												<?php $somaCredito = $quantidade * $credito->getPreco();?>
-												<td colspan="2"><?php echo 'R$: '. number_format($quantidade * $patrimonio->getPreco(), 2, ',', '.'); ?></td>
-												<?php $totalCredito += $somaCredito ?>
+											<?php foreach($_SESSION['estoque'] as $estoque){?>
+												<?php if($estoque->getProduto() == $preco->getProduto()){?>
+													<tr>
+														<?php $somaEstoque = $estoque->getQuantidade() * $preco->getPreco();?>
+														<td colspan="2"><?php echo $estoque->getProduto(); ?></td>
+														<td><?php echo 'R$: '. number_format($somaEstoque, 2, ',', '.'); ?></td>
+														<?php $totalCredito += $somaEstoque ?>
+													</tr>
 												<?php } ?>
-											</tr>
 											<?php } ?>
 										<?php } ?>
 									<tr>
 										<th scope="col" colspan="3">Total</th>
 									</tr>
 									<tr>
-										<th scope="row">Debito:</th>
-										<td colspan="2"><?php echo 'R$: '. number_format($totalDebito, 2, ',', '.'); ?></td>
+										<th colspan="2" scope="row">Debito:</th>
+										<td><?php echo 'R$: '. number_format($totalDebito, 2, ',', '.'); ?></td>
 									</tr>
 									<tr>
-										<th scope="row">Credito:</th>
-										<td colspan="2"><?php echo 'R$: '. number_format($totalCredito, 2, ',', '.'); ?></td>
+										<th colspan="2" scope="row">Credito:</th>
+										<td><?php echo 'R$: '. number_format($totalCredito, 2, ',', '.'); ?></td>
 									</tr>
 									<tr>
 										<?php $soma = $totalCredito - $totalDebito;?>	
-										<th scope="row">Saldo :</th>
-										<td colspan="2" style="color: <?php echo $soma < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($soma, 2, ',', '.');?></td>
+										<th colspan="2" scope="row">Saldo :</th>
+										<td style="color: <?php echo $soma < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($soma, 2, ',', '.');?></td>
+									</tr>
+									<tr>
+										<?php $somaLiquido = $totalCreditoLiquido - $totalDebito;?>	
+										<th colspan="2" scope="row">Saldo Liquido:</th>
+										<td style="color: <?php echo $somaLiquido < 0 ? 'red' : 'green' ; ?>"><?php echo 'R$: '. number_format($somaLiquido, 2, ',', '.');?></td>
 									</tr>
 								</tbody>
 							</table>

@@ -1,6 +1,5 @@
 <?php
 	require_once '../model/Estoque.php';
-	include "../controller/deletar.php";
 	include "../components/inputs.php";
 	session_start();
 ?>
@@ -33,9 +32,6 @@
 		</nav>
 
 		<div class="main">
-			<?php
-				deletar('estoque');
-			?>
 			<nav class="navbar navbar-expand navbar-light navbar-bg">
 				<?php require_once '../components/header.php'; ?>
 			</nav>
@@ -105,7 +101,6 @@
 					<?php if(!empty($_SESSION['estoque'])){?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Produto</th>
 								<th scope="col">Quantidade</th>
@@ -115,7 +110,6 @@
 							<tbody>
 								<?php foreach($_SESSION['estoque'] as $estoque){?>
 									<?php if (empty($_GET['procurar']) or (str_contains($estoque->getFornecedor(), $_GET['procurar'])) or (str_contains($estoque->getProduto(), $_GET['procurar'])) or (str_contains($estoque->getQuantidade(), $_GET['procurar']))) { ?><tr>
-										<td><?php echo $estoque->getCodigo();?></td>
 										<td><?php echo $estoque->getFornecedor();?></td>
 										<td><?php echo $estoque->getProduto();?></td>
 										<td><?php echo $estoque->getQuantidade();?></td>
@@ -132,9 +126,6 @@
 													</svg>
 												</button>
 											</form>
-										</td>
-										<td>
-											<?php echo botaoTabelaDeletar($estoque->getCodigo())?>
 										</td>
 									</tr>
 								<?php }?>	

@@ -80,7 +80,6 @@
 					<?php if(!empty($_SESSION['setor'])){?>
 					<table class="table">
 						<thead>
-							<th scope="col">Codigo</th>
 							<th scope="col">Setor</th>
 							<th scope="col">Editar</th>
 							<th scope="col">Deletar</th>
@@ -89,7 +88,6 @@
 							<?php foreach($_SESSION['setor'] as $setor){?>
 								<?php if(empty($_GET['procurar']) or (str_contains($setor->getSetor(),$_GET['procurar']))){ ?>
 								<tr>
-									<td><?php echo $setor->getCodigo();?></td>
 									<td><?php echo $setor->getSetor();?></td>
 									<td>
 										<form action="#" method="get">

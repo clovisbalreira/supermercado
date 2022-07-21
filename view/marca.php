@@ -95,7 +95,6 @@
 					<?php if (!empty($_SESSION['marca'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Editar</th>
@@ -105,7 +104,6 @@
 								<?php foreach ($_SESSION['marca'] as $marca) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($marca->getNome(), $_GET['procurar'])) or (str_contains($marca->getFornecedor(), $_GET['procurar'])) ) { ?>
 										<tr>
-											<td><?php echo $marca->getCodigo(); ?></td>
 											<td><?php echo $marca->getNome(); ?></td>
 											<td><?php echo $marca->getFornecedor() ?></td>
 											<td>

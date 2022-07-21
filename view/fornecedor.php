@@ -77,7 +77,6 @@ session_start();
 					<?php if (!empty($_SESSION['fornecedor'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
 								<th scope="col">Editar</th>
 								<th scope="col">Deletar</th>
@@ -86,7 +85,6 @@ session_start();
 								<?php foreach ($_SESSION['fornecedor'] as $fornecedor) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($fornecedor->getNome(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $fornecedor->getCodigo(); ?></td>
 											<td><?php echo $fornecedor->getNome(); ?></td>
 											<td>
 												<form action="#" method="get">

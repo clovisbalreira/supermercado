@@ -95,7 +95,6 @@
 					<?php if (!empty($_SESSION['tamanho'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Tamanho</th>
 								<th scope="col">Medida</th>
 								<th scope="col">Editar</th>
@@ -105,7 +104,6 @@
 								<?php foreach ($_SESSION['tamanho'] as $tamanho) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($tamanho->getTamanho(), $_GET['procurar'])) or (str_contains($tamanho->getMedida(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $tamanho->getCodigo(); ?></td>
 											<td><?php echo $tamanho->getTamanho(); ?></td>
 											<td><?php echo $tamanho->getMedida(); ?></td>
 											<td>

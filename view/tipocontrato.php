@@ -46,7 +46,7 @@
 					</div>
 					<form action="../controller/registrar.php" method="GET">
 						<div class="row">
-							<h1>Tipo de contrato <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os tipos de contratos entre o super mercado e os fornecedores.<br>ex. Gondulas, Ilhas etc...')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
+							<h1>Tipo de contrato <span id="mensagem" onmouseover="mostrarInformacoes('Cadastre os tipos de contratos entre o super mercado e os fornecedores, sobre os espaços ocupados.<br>ex. Gondulas, Ilhas etc...')" onmouseout="tirarInformacoes()" style="background-color: red; padding: 2px 10px; border-radius: 50%;">?</span></h1>
 							<div class="col-12 col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
@@ -79,7 +79,6 @@
 					<?php if (!empty($_SESSION['tipoContrato'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Nome</th>
 								<th scope="col">Editar</th>
 								<th scope="col">Deletar</th>
@@ -88,7 +87,6 @@
 								<?php foreach ($_SESSION['tipoContrato'] as $tipocontrato) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($tipocontrato->getNome(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $tipocontrato->getCodigo(); ?></td>
 											<td><?php echo $tipocontrato->getNome(); ?></td>
 											<td>
 												<form action="#" method="get">

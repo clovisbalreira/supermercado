@@ -259,18 +259,21 @@
     }
     // editar e criar contas
     if($_GET['cadastroContas'] == 1){
-        $tipoGet = $_GET['tipoPagamento'];
-        $parcelasInicio = strpos($tipoGet,'Parcelas')+9;
-        $parcelasFim = strpos($tipoGet,' - Dias '); 
-        $parcelas = substr($tipoGet,$parcelasInicio,$parcelasFim-$parcelasInicio);
-        $dias = substr($tipoGet,$parcelasFim+7);
+        $parcelas = 0;
+        $dias = 0;
+        foreach($_SESSION['tipoPagamento'] as $tipoPagamento){
+            if($_GET['tipoPagamento'] == $tipoPagamento->getTipo().' - Parcelas '.$tipoPagamento->getParcelas().' - Dias '.$tipoPagamento->getDias()){
+                $parcelas = $tipoPagamento->getParcelas();
+                $dias = $tipoPagamento->getDias();
+            }
+        }
         $data = date('Y-m-d');
         $valor = $_GET['preco'] / $parcelas;
         if($_GET['codigo'] != ''){
             for($i = 0; $i < $parcelas; $i++){
                 $dataPagamento = date('Y-m-d', strtotime("+ {$i} month {$dias} days", strtotime($data)));
                 if($i == 0){
-                    $_SESSION['contas'][$_GET['codigo']] = new Contas($_GET['codigo'], '', $_GET['nome'], 0, $valor,  date('Y-m-d') , $_GET['tipoPagamento'], $dataPagamento, 'conta');
+                    $_SESSION['contas'][$_GET['codigo']] = new Contas($_GET['codigo'], '', $_GET['nome'], 1, $valor,  date('Y-m-d') , $_GET['tipoPagamento'], $dataPagamento, $_GET['tipo']);
                 }else{
                     $codigo = 0;
                     if(count($_SESSION['contas']) > 0){
@@ -278,8 +281,16 @@
                             $codigo = $array->getCodigo()+1;
                         }
                     }
-                    $_SESSION['contas'][] = new Contas($codigo, '', $_GET['nome'], 0, $valor,  date('Y-m-d'), $_GET['tipoPagamento'], $dataPagamento, $_GET['tipo']);
+                    $_SESSION['contas'][] = new Contas($codigo, '', $_GET['nome'], 1, $valor,  date('Y-m-d'), $_GET['tipoPagamento'], $dataPagamento, $_GET['tipo']);
                 }
+            }
+            if($_GET['tipo'] == 'patrimonio'){
+                if(count($_SESSION['contas']) > 0){
+                    foreach($_SESSION['contas'] as $array){
+                        $codigo = $array->getCodigo()+1;
+                    }
+                }
+                $_SESSION['patrimonio'][$codigo] = new Patrimonio($codigo, $_GET['nome'], $_GET['preco'] * $parcelas);
             }
         }else{
             for($i = 0; $i < $parcelas; $i++){
@@ -290,7 +301,7 @@
                         $codigo = $array->getCodigo()+1;
                     }
                 }
-                $_SESSION['contas'][] = new Contas($codigo, '', $_GET['nome'], 0, $valor,  date('Y-m-d'), $_GET['tipoPagamento'], $dataPagamento, $_GET['tipo']);
+                $_SESSION['contas'][] = new Contas($codigo, '', $_GET['nome'], 1, $valor,  date('Y-m-d'), $_GET['tipoPagamento'], $dataPagamento, $_GET['tipo']);
             }
             if($_GET['tipo'] == 'patrimonio'){
                 if(count($_SESSION['contas']) > 0){
@@ -301,15 +312,18 @@
                 $_SESSION['patrimonio'][$codigo] = new Patrimonio($codigo, $_GET['nome'], $_GET['preco']);
             }
         }
-        header("Refresh:0; ../view/contas.php"); 
+        header("Refresh:0; ../view/contas.php");
     }
     // editar e criar contas compras
     if($_GET['cadastroCompras'] == 1 ){
-        $tipoGet = $_GET['tipoPagamento'];
-        $parcelasInicio = strpos($tipoGet,'Parcelas')+9;
-        $parcelasFim = strpos($tipoGet,' - Dias '); 
-        $parcelas = substr($tipoGet,$parcelasInicio,$parcelasFim-$parcelasInicio);
-        $dias = substr($tipoGet,$parcelasFim+7);
+        $parcelas = 0;
+        $dias = 0;
+        foreach($_SESSION['tipoPagamento'] as $tipoPagamento){
+            if($_GET['tipoPagamento'] == $tipoPagamento->getTipo().' - Parcelas '.$tipoPagamento->getParcelas().' - Dias '.$tipoPagamento->getDias()){
+                $parcelas = $tipoPagamento->getParcelas();
+                $dias = $tipoPagamento->getDias();
+            }
+        }
         $data = date('Y-m-d');
         $valor = $_GET['preco'] / $parcelas;
         if($_GET['codigo'] != ''){
@@ -354,6 +368,7 @@
             $i = 0;
             foreach($_SESSION['estoque'] as $estoque){
                 if($estoque->getProduto() == $_GET['produto']){
+                    echo $estoque->getProduto();
                     $_SESSION['estoque'][$i] = new Estoque($i, $_GET['fornecedor'], $_GET['produto'], $estoque->getQuantidade() + ($_GET['quantidade'] * $_GET['quantidadeTotal']));
                     $possui = true;
                     break;
@@ -375,11 +390,14 @@
     }
     // editar e criar contas vendas
     if($_GET['cadastroVendas'] == 1){
-        $tipoGet = $_GET['tipoPagamento'];
-        $parcelasInicio = strpos($tipoGet,'Parcelas')+9;
-        $parcelasFim = strpos($tipoGet,' - Dias '); 
-        $parcelas = substr($tipoGet,$parcelasInicio,$parcelasFim-$parcelasInicio);
-        $dias = substr($tipoGet,$parcelasFim+7);
+        $parcelas = 0;
+        $dias = 0;
+        foreach($_SESSION['tipoPagamento'] as $tipoPagamento){
+            if($_GET['tipoPagamento'] == $tipoPagamento->getTipo().' - Parcelas '.$tipoPagamento->getParcelas().' - Dias '.$tipoPagamento->getDias()){
+                $parcelas = $tipoPagamento->getParcelas();
+                $dias = $tipoPagamento->getDias();
+            }
+        }
         $data = date('Y-m-d');
         $valor = $_GET['preco'] / $parcelas;
         if($_GET['codigo'] != ''){
@@ -395,7 +413,7 @@
                             $codigo = $array->getCodigo()+1;
                         }
                     }
-                    $_SESSION['contas'][] = new Contas($codigo, $_SESSION['contas'][$_GET['codigo']]->getFornecedor(), $_SESSION['contas'][$_GET['codigo']]->getProduto(), 0, $_GET['quantidade'] * $valor,  date('Y-m-d'), $_GET['tipoPagamento'], $dataPagamento, 'credito');
+                    $_SESSION['contas'][] = new Contas($codigo, $_SESSION['contas'][$_GET['codigo']]->getFornecedor(), $_SESSION['contas'][$_GET['codigo']]->getProduto(), 1, $_GET['quantidade'] * $valor,  date('Y-m-d'), $_GET['tipoPagamento'], $dataPagamento, 'credito');
                 }
             }
             $i = 0;
@@ -422,7 +440,7 @@
             $i = 0;
             foreach($_SESSION['estoque'] as $estoque){
                 if($estoque->getProduto() == $_GET['produto']){
-                    $_SESSION['estoque'][$i] = new Estoque($i, $_SESSION['contas'][$_GET['codigo']]->getFornecedor(), $_GET['produto'], $estoque->getQuantidade() - $_GET['quantidade']);
+                    $_SESSION['estoque'][$i] = new Estoque($i, $_GET['fornecedor'], $_GET['produto'], $estoque->getQuantidade() - $_GET['quantidade']);
                     break;
                 }
                 $i ++;
@@ -474,7 +492,7 @@
         if($_GET['tipo'] == 'credito'){
             foreach($_SESSION['contas'] as $secao){
                 if($secao->getProduto() == $_GET['nome']){
-                    $_SESSION['contas'][] = new Contas($codigo, $secao->getFornecedor(), $secao->getProduto(), $secao->getQuantidade(), $secao->getPreco(),  $secao->getData(), $secao->getTipoPagamento(), $secao->getDataPagamento(), $_GET['tipo']);
+                    $_SESSION['contas'][$secao->getCodigo()] = new Contas($secao->getCodigo(), $secao->getFornecedor(), $secao->getProduto(), $secao->getQuantidade(), $_GET['preco'],  $secao->getData(), $secao->getTipoPagamento(), $secao->getDataPagamento(), $_GET['tipo']);
                     deletar('patrimonio');
                 }                  
             }

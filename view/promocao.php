@@ -140,7 +140,6 @@
 					<?php if (!empty($_SESSION['promocao'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Produto</th>
 								<th scope="col">Preço</th>
@@ -153,7 +152,6 @@
 								<?php foreach ($_SESSION['promocao'] as $promocao) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($promocao->getFornecedor(), $_GET['procurar'])) or (str_contains($promocao->getProduto(), $_GET['procurar'])) or (str_contains($promocao->getPreco(), $_GET['procurar'])) or (str_contains($promocao->getDataInicio(), $_GET['procurar'])) or (str_contains($promocao->getDataFim(), $_GET['procurar'])) ) { ?>
 										<tr>
-											<td><?php echo $promocao->getCodigo(); ?></td>
 											<td><?php echo $promocao->getFornecedor(); ?></td>
 											<td><?php echo $promocao->getProduto(); ?></td>
 											<td><?php echo 'R$: ' . number_format($promocao->getPreco(), 2, ',', '.'); ?></td>

@@ -157,7 +157,6 @@
 					<?php if (!empty($_SESSION['contrato'])) { ?>
 						<table class="table">
 							<thead>
-								<th scope="col">Codigo</th>
 								<th scope="col">Tipo Contrato</th>
 								<th scope="col">Fornecedor</th>
 								<th scope="col">Segmento</th>
@@ -172,7 +171,6 @@
 								<?php foreach ($_SESSION['contrato'] as $contrato) { ?>
 									<?php if (empty($_GET['procurar']) or (str_contains($contrato->getTipoContrato(), $_GET['procurar'])) or (str_contains($contrato->getFornecedor(), $_GET['procurar'])) or (str_contains($contrato->getPorcentagem(), $_GET['procurar'])) or (str_contains($contrato->getValor(), $_GET['procurar']))) { ?>
 										<tr>
-											<td><?php echo $contrato->getCodigo(); ?></td>
 											<td><?php echo $contrato->getTipoContrato(); ?></td>
 											<td><?php echo $contrato->getFornecedor() ?></td>
 											<td><?php echo $contrato->getSegmento() ?></td>
